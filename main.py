@@ -183,17 +183,17 @@ with tab1:
 
                 stats = {}
                 if "잎 수" in num_cols:
-                    stats["잎 수 (장)"] = f"평균 {growth_df['잎 수'].mean():.1f}장 / 표준편차 {growth_df['잎 수'].std():.1f}장"
+                    stats["잎 수 (장)"] = f"평균 {growth_df['잎 수'].mean():.2f}장, 표준편차 {growth_df['잎 수'].std():.2f}장, n={len(growth_df)}"
                 if "지상부 길이" in num_cols:
-                    stats["지상부 길이 (mm)"] = f"평균 {growth_df['지상부 길이'].mean():.1f}mm / 표준편차 {growth_df['지상부 길이'].std():.1f}mm"
+                    stats["지상부 길이 (mm)"] = f"평균 {growth_df['지상부 길이'].mean():.2f}mm, 표준편차 {growth_df['지상부 길이'].std():.2f}mm, n={len(growth_df)}"
                 if "지하부 길이" in num_cols:
-                    stats["지하부 길이 (mm)"] = f"평균 {growth_df['지하부 길이'].mean():.1f}mm / 표준편차 {growth_df['지하부 길이'].std():.1f}mm"
+                    stats["지하부 길이 (mm)"] = f"평균 {growth_df['지하부 길이'].mean():.2f}mm, 표준편차 {growth_df['지하부 길이'].std():.2f}mm, n={len(growth_df)}"
                 if "지상부 질량" in num_cols:
-                    stats["지상부 질량 (g)"] = f"평균 {growth_df['지상부 질량'].mean():.2f}g / 표준편차 {growth_df['지상부 질량'].std():.2f}g"
+                    stats["지상부 질량 (g)"] = f"평균 {growth_df['지상부 질량'].mean():.2f}g, 표준편차 {growth_df['지상부 질량'].std():.2f}g, n={len(growth_df)}"
                 if "지하부 질량" in num_cols:
-                    stats["지하부 질량 (g)"] = f"평균 {growth_df['지하부 질량'].mean():.2f}g / 표준편차 {growth_df['지하부 질량'].std():.2f}g"
+                    stats["지하부 질량 (g)"] = f"평균 {growth_df['지하부 질량'].mean():.2f}g, 표준편차 {growth_df['지하부 질량'].std():.2f}g, n={len(growth_df)}"
                 if "생중량" in num_cols:
-                    stats["생중량 (g)"] = f"평균 {growth_df['생중량'].mean():.2f}g / 표준편차 {growth_df['생중량'].std():.2f}g"
+                    stats["생중량 (g)"] = f"평균 {growth_df['생중량'].mean():.2f}g, 표준편차 {growth_df['생중량'].std():.2f}g, n={len(growth_df)}"
 
                 cols = st.columns(len(stats))
                 for i, (k, v) in enumerate(stats.items()):
@@ -240,7 +240,7 @@ with tab2:
                     n = len(figs)
                     rows = (n + 2) // 3
                     cols = 3 if n > 2 else 1
-                    fig_grid = make_subplots(rows=rows, cols=cols, subplot_titles=[f"{s.layout.title.text}" for s in figs])
+                    fig_grid = make_subplots(rows=rows, cols=cols, subplot_titles=[s.layout.title.text for s in figs])
                     for idx, s in enumerate(figs):
                         r = idx // 3 + 1
                         c = idx % 3 + 1
