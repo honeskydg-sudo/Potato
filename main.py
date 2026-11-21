@@ -36,18 +36,16 @@ def std_cols(df):
     rename = {}
     for c in df.columns:
         k = c.lower().replace(" ", "")
-        if k in ("time", "categories", "시간", "날짜", "datetime", "date"):
+        if k in ("time", "categories", "시간", "날짜", "datetime", "date", "시간별", "측정시간", "측정시각"):
             rename[c] = "time"
         elif k in ("temperature", "온도"):
             rename[c] = "temperature"
         elif k in ("humidity", "습도"):
             rename[c] = "humidity"
-        elif k == "ph":
+        elif k == "ph" or k == "phkj":
             rename[c] = "ph"
-        elif k == "ec":
+        elif k == "ec" or k == "ecmpn" or k == "전기전도도":
             rename[c] = "ec"
-        elif "생중량" in k:
-            rename[c] = "생중량"
         elif "잎" in k:
             rename[c] = "잎 수"
         elif "지상부" in k and "길이" in k:
@@ -58,9 +56,13 @@ def std_cols(df):
             rename[c] = "지상부 질량"
         elif "지하부" in k and ("질량" in k or "무게" in k):
             rename[c] = "지하부 질량"
+        elif "생중량" in k:
+            rename[c] = "생중량"
         elif "개체" in k:
             rename[c] = "개체번호"
     df = df.rename(columns=rename)
+
+    # 숫자 변환 (단위·문자 섞임 대응)
     for c in df.columns:
         if c in ("time", "개체번호"):
             continue
@@ -68,8 +70,10 @@ def std_cols(df):
             num = pd.to_numeric(df[c].astype(str).str.replace(",", "").str.extract(r"(-?\d+\.?\d*)")[0], errors="coerce")
             if num.notna().mean() >= 0.5:
                 df[c] = num
+
     if "생중량" not in df.columns and {"지상부 질량", "지하부 질량"} <= set(df.columns):
         df["생중량"] = df["지상부 질량"] + df["지하부 질량"]
+
     if "time" in df.columns:
         t = df["time"].astype(str).str.strip()
         parsed = pd.to_datetime(t, errors="coerce", format="mixed")
@@ -175,12 +179,15 @@ with tab1:
         if growth_df is None or len(growth_df) < 2:
             st.info("생육 데이터를 업로드하면 개체별 생육 요약을 볼 수 있어요. (데이터 2개 이상 필요)")
         else:
+            # 숫자 열 찾기 (개체번호 제외)
             num_cols = [c for c in growth_df.select_dtypes(include=[np.number]).columns if c != "개체번호"]
+
             if len(num_cols) == 0:
                 st.info("분석에 사용할 수 있는 숫자 열이 없어요. CSV 열 이름을 확인해 주세요.")
             else:
                 st.subheader("📊 개체별 생육 요약 통계")
 
+                # 각 지표별 평균·표준편차 계산
                 stats = {}
                 if "잎 수" in num_cols:
                     stats["잎 수 (장)"] = f"평균 {growth_df['잎 수'].mean():.2f}장, 표준편차 {growth_df['잎 수'].std():.2f}장, n={len(growth_df)}"
