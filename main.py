@@ -19,7 +19,7 @@ html, body, [class*="css"] {
 """, unsafe_allow_html=True)
 
 # ============================================================
-# CSV 인코딩 자동 판별 (utf-8-sig → cp949)
+# CSV 인코딩 자동 판별 (utf-8-sig -> cp949)
 # ============================================================
 def read_csv(file):
     data = file.getvalue()
@@ -31,7 +31,7 @@ def read_csv(file):
     return pd.DataFrame()
 
 # ============================================================
-# 열 이름 표준화 (학교마다 다른 열 이름 → 표준 이름)
+# 열 이름 표준화 (학교마다 다른 열 이름 -> 표준 이름)
 # ============================================================
 def std_cols(df):
     df = df.copy()
@@ -64,6 +64,7 @@ def std_cols(df):
         elif "개체" in k:
             rename[c] = "개체번호"
     df = df.rename(columns=rename)
+
     for c in df.columns:
         if c in ("time", "개체번호"):
             continue
@@ -71,8 +72,10 @@ def std_cols(df):
             num = pd.to_numeric(df[c].astype(str).str.replace(",", "").str.extract(r"(-?\d+\.?\d*)")[0], errors="coerce")
             if num.notna().mean() >= 0.5:
                 df[c] = num
+
     if "생중량" not in df.columns and {"지상부 질량", "지하부 질량"} <= set(df.columns):
         df["생중량"] = df["지상부 질량"] + df["지하부 질량"]
+
     if "time" in df.columns:
         t = df["time"].astype(str).str.strip()
         parsed = pd.to_datetime(t, errors="coerce", format="mixed")
@@ -148,7 +151,7 @@ def render_bar_chart(data, x_col, y_col, title):
     st.plotly_chart(fig, width="stretch")
 
 def render_scatter_trendline(x_data, y_data, x_label, y_label, title):
-    """산점도 + 추세선 (px.scatter trendline 금지 → np.polyfit 으로 직접 계산)"""
+    """산점도 + 추세선 (px.scatter trendline 금지 -> np.polyfit 으로 직접 계산)"""
     mask = x_data.notna() & y_data.notna()
     x_v = x_data[mask].values
     y_v = y_data[mask].values
